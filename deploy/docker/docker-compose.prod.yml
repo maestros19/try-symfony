@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: symfony_nginx_prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./public:/app/public:ro
+      - ./docker/nginx/prod.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - php
+    networks:
+      - symfony_prod
+
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: symfony_php_prod
+    restart: unless-stopped
+    environment:
+      APP_ENV: prod
+      APP_DEBUG: 0
+      DATABASE_URL: postgresql://symfony:symfony@postgres:5432/symfony_prod
+    volumes:
+      - ./var/log:/app/var/log
+    depends_on:
+      - postgres
+    networks:
+      - symfony_prod
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: symfony_postgres_prod
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: symfony_prod
+      POSTGRES_USER: symfony
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-symfony}
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - symfony_prod
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U symfony"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data_prod:
+    driver: local
+
+networks:
+  symfony_prod:
+    driver: bridge
