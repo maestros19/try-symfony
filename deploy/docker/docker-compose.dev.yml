@@ -1,0 +1,57 @@
+version: '3.9'
+
+services:
+  # Service PHP (Symfony)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: symfony_app_dev
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - .:/app:cached
+    environment:
+      APP_ENV: dev
+      APP_DEBUG: 1
+      DATABASE_URL: postgres://symfony:symfony@postgres:5432/symfony_db
+      XDEBUG_MODE: debug,develop,coverage
+      XDEBUG_CLIENT_HOST: host.docker.internal
+    expose:
+      - "9000"
+    depends_on:
+      - postgres
+
+  # Service PostgreSQL
+  postgres:
+    image: postgres:15
+    container_name: symfony_postgres_dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: symfony
+      POSTGRES_PASSWORD: symfony
+      POSTGRES_DB: symfony_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+
+  # Service pgAdmin
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: symfony_pgadmin_dev
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "8081:80"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data_dev:
+
+networks:
+  default:
+    name: symfony_dev_network
