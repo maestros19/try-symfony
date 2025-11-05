@@ -1,0 +1,80 @@
+# Configuration des services - Démontre le DIP (Dependency Inversion Principle)
+
+services:
+    # Configuration par défaut
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # ===== DOMAIN LAYER =====
+    
+    # Repositories (Interfaces) - Binding avec les implémentations
+    App\Domain\Repository\AnimalRepositoryInterface:
+        alias: App\Infrastructure\Persistence\Repository\AnimalRepository
+
+    App\Domain\Repository\OwnerRepositoryInterface:
+        alias: App\Infrastructure\Persistence\Repository\OwnerRepository
+
+    # Domain Services
+    App\Domain\Service\:
+        resource: '../../../Domain/Service/'
+
+    # ===== APPLICATION LAYER =====
+    
+    # Use Cases - Binding des interfaces avec les implémentations
+    App\Application\Port\In\CreateAnimalUseCaseInterface:
+        alias: App\Application\UseCase\CreateAnimalUseCase
+
+    App\Application\Port\In\CreateOwnerUseCaseInterface:
+        alias: App\Application\UseCase\CreateOwnerUseCase
+
+    App\Application\Port\In\GetAnimalUseCaseInterface:
+        alias: App\Application\UseCase\GetAnimalUseCase
+
+    App\Application\Port\In\GetOwnerUseCaseInterface:
+        alias: App\Application\UseCase\GetOwnerUseCase
+
+    # Use Cases - Auto-registration
+    App\Application\UseCase\:
+        resource: '../../../Application/UseCase/'
+
+    # ===== INFRASTRUCTURE LAYER =====
+    
+    # Repositories Doctrine
+    App\Infrastructure\Persistence\Repository\:
+        resource: '../../Persistence/Repository/'
+        tags: ['doctrine.repository_service']
+
+    # ===== PRESENTATION LAYER =====
+    
+    # Controllers
+    App\Presentation\Controller\:
+        resource: '../../../Presentation/Controller/'
+        tags: ['controller.service_arguments']
+
+    # ===== ADDITIONAL CONFIGURATIONS =====
+    
+    # Custom services with specific configuration
+    
+    # Event Subscribers (si nécessaire)
+    # App\Infrastructure\Adapter\EventSubscriber\:
+    #     resource: '../EventSubscriber/'
+    #     tags: ['kernel.event_subscriber']
+
+# Configuration spécifique pour Doctrine
+doctrine:
+    orm:
+        # Active les filtres Doctrine
+        filters:
+            # Exemple: soft_deleteable:
+            #     class: Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
+            #     enabled: true
+        
+        # Mappings
+        mappings:
+            App:
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Infrastructure/Persistence/Doctrine'
+                prefix: 'App\Domain\Entity'
+                alias: App
+                type: xml

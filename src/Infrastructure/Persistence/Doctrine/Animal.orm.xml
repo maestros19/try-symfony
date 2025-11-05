@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                  https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <!-- 
+        Mapping avancé avec héritage SINGLE_TABLE
+        Démontre: Héritage, Discriminator, Index, Relations
+    -->
+    <entity name="App\Domain\Entity\Animal" 
+            table="animals" 
+            inheritance-type="SINGLE_TABLE"
+            repository-class="App\Infrastructure\Persistence\Repository\AnimalRepository">
+        
+        <!-- Colonne discriminatrice pour le polymorphisme -->
+        <discriminator-column name="type" type="string" length="50"/>
+        <discriminator-map>
+            <discriminator-mapping value="dog" class="App\Domain\Entity\Dog"/>
+            <discriminator-mapping value="cat" class="App\Domain\Entity\Cat"/>
+            <discriminator-mapping value="bird" class="App\Domain\Entity\Bird"/>
+        </discriminator-map>
+
+        <!-- Clé primaire -->
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+
+        <!-- Champs communs -->
+        <field name="name" type="string" length="100" nullable="false">
+            <options>
+                <option name="comment">Nom de l'animal</option>
+            </options>
+        </field>
+
+        <field name="birthDate" type="datetime_immutable" column="birth_date" nullable="false">
+            <options>
+                <option name="comment">Date de naissance</option>
+            </options>
+        </field>
+
+        <field name="weight" type="float" nullable="false">
+            <options>
+                <option name="comment">Poids en kilogrammes</option>
+                <option name="unsigned">true</option>
+            </options>
+        </field>
+
+        <field name="color" type="string" length="50" nullable="false"/>
+
+        <field name="createdAt" type="datetime_immutable" column="created_at" nullable="false"/>
+
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="false"/>
+
+        <!-- Relation ManyToOne avec Owner -->
+        <many-to-one field="owner" target-entity="App\Domain\Entity\Owner" inversed-by="animals">
+            <join-column name="owner_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
+        </many-to-one>
+
+        <!-- Relation OneToMany avec MedicalRecord -->
+        <one-to-many field="medicalRecords" target-entity="App\Domain\Entity\MedicalRecord" mapped-by="animal">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+            <order-by>
+                <order-by-field name="visitDate" direction="DESC"/>
+            </order-by>
+        </one-to-many>
+
+        <!-- Index pour améliorer les performances -->
+        <indexes>
+            <index name="idx_animal_name" columns="name"/>
+            <index name="idx_animal_type" columns="type"/>
+            <index name="idx_animal_owner" columns="owner_id"/>
+            <index name="idx_animal_birth_date" columns="birth_date"/>
+        </indexes>
+
+    </entity>
+
+</doctrine-mapping>
