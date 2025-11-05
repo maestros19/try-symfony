@@ -8,7 +8,10 @@ use App\Domain\Exception\InvalidOwnerDataException;
 use App\Domain\ValueObject\Address;
 use App\Domain\ValueObject\Email;
 use App\Domain\ValueObject\PhoneNumber;
+use App\Infrastructure\Persistence\Repository\OwnerRepository;
+
 use DateTimeImmutable;
+use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
@@ -21,7 +24,7 @@ use Doctrine\Common\Collections\Collection;
  * - Encapsulation et protection des données
  * - Logique métier riche
  */
-#[ORM\Entity(repositoryClass: AnimalRepository::class)]
+#[ORM\Entity(repositoryClass: OwnerRepository::class)]
 class Owner
 {
     #[ORM\Id]
@@ -36,13 +39,13 @@ class Owner
     private string $lastName;
 
     #[ORM\Column(length: 255, unique: true)]
-    private string $email;
+    private Email $email;
 
     #[ORM\Column(length: 30, nullable: true)]
-    private ?string $phoneNumber = null;
+    private ?PhoneNumber $phoneNumber = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $address = null;
+    private ?Address $address = null;
 
     #[ORM\Column]
     private \DateTimeImmutable $registrationDate;

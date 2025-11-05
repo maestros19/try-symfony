@@ -3,12 +3,10 @@
 namespace App\Domain\Entity;
 
 use App\Infrastructure\Persistence\Repository\AnimalRepository;
-use Doctrine\ORM\Mapping as ORM;
-
 use App\Domain\Exception\InvalidAnimalDataException;
+
 use DateTimeImmutable;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Classe abstraite Animal - Démontre l'héritage et le polymorphisme
@@ -35,7 +33,7 @@ abstract class Animal
     private ?string $name = null;
 
     #[ORM\Column]
-    private ?\DateTime $birthDate = null;
+    private ?\DateTimeImmutable $birthDate = null;
 
     #[ORM\Column]
     private ?float $weight = null;
@@ -109,12 +107,12 @@ abstract class Animal
         return $this;
     }
 
-    public function getBirthDate(): ?\DateTime
+    public function getBirthDate(): ?\DateTimeImmutable
     {
         return $this->birthDate;
     }
 
-    public function setBirthDate(\DateTime $birthDate): static
+    public function setBirthDate(\DateTimeImmutable $birthDate): static
     {
         $this->birthDate = $birthDate;
 

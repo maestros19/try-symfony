@@ -49,5 +49,5 @@ interface AnimalRepositoryInterface
 
     public function delete(Animal $animal): void;
 
-    public function count(): int;
+    public function countAll(): int;
 }

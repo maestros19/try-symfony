@@ -8,6 +8,7 @@ use App\Domain\Entity\Animal;
 use App\Domain\Entity\Owner;
 use App\Domain\Exception\AnimalNotFoundException;
 use App\Domain\Repository\AnimalRepositoryInterface;
+
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -97,7 +98,18 @@ class AnimalRepository extends ServiceEntityRepository implements AnimalReposito
         $this->getEntityManager()->flush();
     }
 
-    public function count(): int
+    // public function count(): int
+    // {
+    //     return (int) $this->createQueryBuilder('a')
+    //         ->select('COUNT(a.id)')
+    //         ->getQuery()
+    //         ->getSingleScalarResult();
+    // }
+
+    /**
+     * Compte le nombre total d’animaux dans la base
+     */
+    public function countAll(): int
     {
         return (int) $this->createQueryBuilder('a')
             ->select('COUNT(a.id)')
