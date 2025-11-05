@@ -211,5 +211,7 @@ src/
 
         composer recipes:install doctrine/doctrine-bundle --force
 
+        php bin/console make:migration
         php bin/console doctrine:database:create
+        php bin/console doctrine:database:diff
         php bin/console doctrine:migrations:migrate

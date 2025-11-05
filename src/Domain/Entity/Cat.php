@@ -25,9 +25,10 @@ class Cat extends Animal
         float $weight,
         string $color,
         bool $isIndoor = true,
-        bool $isHypoallergenic = false
+        bool $isHypoallergenic = false,
+        Owner $owner,
     ) {
-        parent::__construct($name, $birthDate, $weight, $color);
+        parent::__construct($name, $birthDate, $weight, $color, $owner);
         $this->isIndoor = $isIndoor;
         $this->isHypoallergenic = $isHypoallergenic;
     }

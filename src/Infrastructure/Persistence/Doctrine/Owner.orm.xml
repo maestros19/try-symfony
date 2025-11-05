@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                  https://www.doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <!-- 
+        Entité Owner - Représente un propriétaire d'animaux
+        Démontre l'utilisation de Value Objects et relations bidirectionnelles
+    -->
+    <entity name="App\Domain\Entity\Owner" 
+            table="owners" 
+            repository-class="App\Infrastructure\Persistence\Repository\OwnerRepository">
+
+        <!-- Clé primaire -->
+        <id name="id" type="integer" column="id">
+            <generator strategy="AUTO"/>
+        </id>
+
+        <!-- Champs de base -->
+        <field name="firstName" type="string" length="100" nullable="false">
+            <options>
+                <option name="comment">Prénom du propriétaire</option>
+            </options>
+        </field>
+
+        <field name="lastName" type="string" length="100" nullable="false">
+            <options>
+                <option name="comment">Nom de famille du propriétaire</option>
+            </options>
+        </field>
+
+        <!-- Value Object Email -->
+        <field name="email" type="string" length="255" nullable="false" unique="true">
+            <options>
+                <option name="comment">Email unique du propriétaire</option>
+            </options>
+        </field>
+
+        <!-- Value Object PhoneNumber (nullable) -->
+        <field name="phoneNumber" type="string" length="30" nullable="true">
+            <options>
+                <option name="comment">Numéro de téléphone du propriétaire</option>
+            </options>
+        </field>
+
+        <!-- Value Object Address (nullable) -->
+        <field name="address" type="string" length="255" nullable="true">
+            <options>
+                <option name="comment">Adresse postale du propriétaire</option>
+            </options>
+        </field>
+
+        <!-- Dates de gestion -->
+        <field name="registrationDate" type="datetime_immutable" column="registration_date" nullable="false">
+            <options>
+                <option name="comment">Date d'inscription du propriétaire</option>
+            </options>
+        </field>
+
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="false">
+            <options>
+                <option name="comment">Date de dernière mise à jour</option>
+            </options>
+        </field>
+
+        <!-- Statut actif -->
+        <field name="isActive" type="boolean" nullable="false">
+            <options>
+                <option name="comment">Statut actif du propriétaire</option>
+                <option name="default">true</option>
+            </options>
+        </field>
+
+        <!-- Relation OneToMany avec Animal -->
+        <one-to-many field="animals" target-entity="App\Domain\Entity\Animal" mapped-by="owner">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+            <orphan-removal>true</orphan-removal>
+        </one-to-many>
+
+        <!-- Index pour améliorer les performances -->
+        <indexes>
+            <index name="idx_owner_last_name" columns="last_name"/>
+            <index name="idx_owner_email" columns="email"/>
+            <index name="idx_owner_registration_date" columns="registration_date"/>
+            <index name="idx_owner_is_active" columns="is_active"/>
+            <index name="idx_owner_full_name" columns="last_name,first_name"/>
+        </indexes>
+
+        <!-- Contraintes d'unicité -->
+        <unique-constraints>
+            <unique-constraint name="uniq_owner_email" columns="email"/>
+        </unique-constraints>
+
+    </entity>
+
+</doctrine-mapping>

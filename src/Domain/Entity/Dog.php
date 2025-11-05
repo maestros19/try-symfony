@@ -36,9 +36,10 @@ class Dog extends Animal
         float $weight,
         string $color,
         string $breed,
-        bool $isDangerous = false
+        bool $isDangerous = false,
+        Owner $owner,
     ) {
-        parent::__construct($name, $birthDate, $weight, $color);
+        parent::__construct($name, $birthDate, $weight, $color, $owner);
         
         $this->validateBreed($breed);
         $this->breed = $breed;

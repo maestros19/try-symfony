@@ -30,27 +30,27 @@ abstract class Animal
     private ?int $id = null;
 
     #[ORM\Column(length: 2255)]
-    private ?string $name = null;
+    protected ?string $name = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $birthDate = null;
+    protected ?\DateTimeImmutable $birthDate = null;
 
     #[ORM\Column]
-    private ?float $weight = null;
+    protected ?float $weight = null;
     
 
     #[ORM\Column(length: 30)]
-    private ?string $color = null;
+    protected ?string $color = null;
 
     #[ORM\ManyToOne(targetEntity: Owner::class, inversedBy: 'animals')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Owner $owner = null;
+    protected ?Owner $owner = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    protected ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $updatedAt = null;
+    protected ?\DateTimeImmutable $updatedAt = null;
 
     
     /**
@@ -64,9 +64,10 @@ abstract class Animal
 
     public function __construct(
         string $name,
-        DateTimeImmutable $birthDate,
+        \DateTimeImmutable $birthDate,
         float $weight,
-        string $color
+        string $color,
+        Owner $owner
     ) {
         $this->validateName($name);
         $this->validateWeight($weight);
@@ -76,8 +77,9 @@ abstract class Animal
         $this->birthDate = $birthDate;
         $this->weight = $weight;
         $this->color = trim($color);
-        $this->createdAt = new DateTimeImmutable();
-        $this->updatedAt = new DateTimeImmutable();
+        $this->owner = $owner;
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
 

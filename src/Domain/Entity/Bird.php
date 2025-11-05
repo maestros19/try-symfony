@@ -28,9 +28,10 @@ class Bird extends Animal
         string $color,
         string $species,
         float $wingSpan,
-        bool $canTalk = false
+        bool $canTalk = false,
+        Owner $owner,
     ) {
-        parent::__construct($name, $birthDate, $weight, $color);
+        parent::__construct($name, $birthDate, $weight, $color, $owner);
         
         $this->validateSpecies($species);
         $this->validateWingSpan($wingSpan);

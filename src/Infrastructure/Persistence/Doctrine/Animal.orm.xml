@@ -27,7 +27,7 @@
         </id>
 
         <!-- Champs communs -->
-        <field name="name" type="string" length="100" nullable="false">
+        <field name="name" type="string" length="2255" nullable="false">
             <options>
                 <option name="comment">Nom de l'animal</option>
             </options>
@@ -46,27 +46,28 @@
             </options>
         </field>
 
-        <field name="color" type="string" length="50" nullable="false"/>
+        <field name="color" type="string" length="30" nullable="false">
+            <options>
+                <option name="comment">Couleur de l'animal</option>
+            </options>
+        </field>
 
-        <field name="createdAt" type="datetime_immutable" column="created_at" nullable="false"/>
+        <field name="createdAt" type="datetime_immutable" column="created_at" nullable="false">
+            <options>
+                <option name="comment">Date de création</option>
+            </options>
+        </field>
 
-        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="false"/>
+        <field name="updatedAt" type="datetime_immutable" column="updated_at" nullable="false">
+            <options>
+                <option name="comment">Date de mise à jour</option>
+            </options>
+        </field>
 
         <!-- Relation ManyToOne avec Owner -->
         <many-to-one field="owner" target-entity="App\Domain\Entity\Owner" inversed-by="animals">
-            <join-column name="owner_id" referenced-column-name="id" nullable="true" on-delete="SET NULL"/>
+            <join-column name="owner_id" referenced-column-name="id" nullable="false" on-delete="CASCADE"/>
         </many-to-one>
-
-        <!-- Relation OneToMany avec MedicalRecord -->
-        <one-to-many field="medicalRecords" target-entity="App\Domain\Entity\MedicalRecord" mapped-by="animal">
-            <cascade>
-                <cascade-persist/>
-                <cascade-remove/>
-            </cascade>
-            <order-by>
-                <order-by-field name="visitDate" direction="DESC"/>
-            </order-by>
-        </one-to-many>
 
         <!-- Index pour améliorer les performances -->
         <indexes>
@@ -74,6 +75,7 @@
             <index name="idx_animal_type" columns="type"/>
             <index name="idx_animal_owner" columns="owner_id"/>
             <index name="idx_animal_birth_date" columns="birth_date"/>
+            <index name="idx_animal_created_at" columns="created_at"/>
         </indexes>
 
     </entity>
