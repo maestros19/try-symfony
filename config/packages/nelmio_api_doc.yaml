@@ -1,0 +1,13 @@
+# config/packages/nelmio_api_doc.yaml
+nelmio_api_doc:
+    documentation:
+        info:
+            title: Try Symfony API By Maestros
+            description: This is an awesome app to decouvrir Symfony Framework!
+            version: 1.0.0
+    areas:
+        default:
+            path_patterns: [ ^/api ]  # Détecte toutes les routes /api
+            host_patterns: [ ^.*$ ]
+    models: 
+        use_jms: false  # Utilise le serializer natif de Symfony
