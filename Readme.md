@@ -205,3 +205,8 @@ src/
     │   └── AnimalController.php
     └── Request
         └── CreateAnimalRequest.php
+
+
+        Mettre a jour le symfony lock
+
+        composer recipes:install doctrine/doctrine-bundle --force

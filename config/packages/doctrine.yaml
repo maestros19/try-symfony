@@ -18,12 +18,28 @@ doctrine:
             Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
         auto_mapping: true
         mappings:
-            App:
-                type: attribute
+
+            Domain: 
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
+                type: attribute
+                dir: '%kernel.project_dir%/src/Domain/Entity'
+                prefix: 'App\Domain\Entity'
+                alias: Domain
+
+            Infrastructure:
+                is_bundle: false
+                type: xml
+                dir: '%kernel.project_dir%/src/Infrastructure/Persistence/Doctrine'
+                prefix: 'App\Domain\Entity'
+                alias: Infrastructure
+
+            # App:
+            #     type: attribute
+            #     is_bundle: false
+            #     dir: '%kernel.project_dir%/src/Entity'
+            #     prefix: 'App\Entity'
+            #     alias: App
+
         controller_resolver:
             auto_mapping: false
 

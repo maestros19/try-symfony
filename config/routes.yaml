@@ -3,12 +3,3 @@ controllers:
         path: ../src/Presentation/Controller
         namespace: App\Presentation\Controller
     type: attribute
-
-
-
-Domain Driven desing
-
-swagger
-
-
-- 
