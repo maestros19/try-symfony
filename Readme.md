@@ -210,3 +210,6 @@ src/
         Mettre a jour le symfony lock
 
         composer recipes:install doctrine/doctrine-bundle --force
+
+        php bin/console doctrine:database:create
+        php bin/console doctrine:migrations:migrate
