@@ -73,12 +73,14 @@
         </field>
 
         <!-- Relation OneToMany avec Animal -->
-        <one-to-many field="animals" target-entity="App\Domain\Entity\Animal" mapped-by="owner">
+        <one-to-many field="animals" 
+                     target-entity="App\Domain\Entity\Animal" 
+                     mapped-by="owner"
+                     orphan-removal="true">
             <cascade>
                 <cascade-persist/>
                 <cascade-remove/>
             </cascade>
-            <orphan-removal>true</orphan-removal>
         </one-to-many>
 
         <!-- Index pour améliorer les performances -->
