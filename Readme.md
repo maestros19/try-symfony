@@ -1,39 +1,3 @@
-1- lister les animauxx de compagnies.
-2- proprietaires des animaux.
-
-.
-├── Application
-│   ├── DTO
-│   ├── Port
-│   │   ├── In
-│   │   └── Out
-│   └── UseCase
-├── Domain
-│   ├── Entity
-│   ├── Exception
-│   ├── Repository
-│   └── Service
-├── Infrastructure
-│   ├── Adapter
-│   │   ├── CLI
-│   │   ├── Config
-│   │   └── Http
-│   └── Persistence
-│       ├── Doctrine
-│       └── Repository
-├── Kernel.php
-└── Presentation
-    ├── CLI
-    ├── Controller
-    │   └── RecipeController.php
-    └── Request
-
-
-voila la structurre de mon projet, l'ideeee est de faire un egstion des des animaux de compagnie leure proprietaire, on doit voir les concept de l'oriente object (heritage, polymophisme, interface, protectin des donnees), tu dois aussi utiliser les principes de solid dans ce code pour qu'il soit reutilisable le plus possible, sans repetition et tout les bonne pratique... on doit egalement voir comment j'utilise les concepts avances de Doctrines, bref fais tout comme un developpeur senior Symfony partant de cette architecture de base.
-
-on est sur du symfony 7 et j'utilise une architecture hexagonale
-
-
 # 🐾 Système de Gestion d'Animaux de Compagnie
 
 ## 📋 Vue d'ensemble
@@ -180,48 +144,62 @@ $this->createQueryBuilder('a')
 
 ```
 src/
-├── Application/
-│   ├── DTO/
+├── Application
+│   ├── DTO
+│   │   ├── AnimalResponseDTO.php
 │   │   ├── CreateAnimalDTO.php
 │   │   ├── CreateOwnerDTO.php
-│   │   ├── AnimalResponseDTO.php
 │   │   └── OwnerResponseDTO.php
-│   ├── Port/
-│   │   ├── In/
+│   ├── Port
+│   │   ├── In
 │   │   │   ├── CreateAnimalUseCaseInterface.php
-│   │   │   └── GetAnimalUseCaseInterface.php
-│   │   └── Out/ (Repositories interfaces dans Domain)
-│   └── UseCase/
+│   │   │   ├── CreateOwnerUseCaseInterface.php
+│   │   │   ├── GetAnimalUseCaseInterface.php
+│   │   │   └── GetOwnerUseCaseInterface.php
+│   │   └── Out
+│   └── UseCase
 │       ├── CreateAnimalUseCase.php
-│       ├── CreateOwnerUseCase.php
-│       ├── GetAnimalUseCase.php
 │       └── GetOwnerUseCase.php
-├── Domain/
-│   ├── Entity/
-│   │   ├── Animal.php (abstract)
-│   │   ├── Dog.php
-│   │   ├── Cat.php
+├── Domain
+│   ├── Entity
+│   │   ├── Animal.php
 │   │   ├── Bird.php
-│   │   ├── Owner.php
-│   │   └── MedicalRecord.php
-│   ├── ValueObject/
-│   │   ├── Email.php
-│   │   ├── PhoneNumber.php
-│   │   └── Address.php
-│   ├── Exception/
-│   │   ├── PetManagementException.php (base)
+│   │   ├── Cat.php
+│   │   ├── Dog.php
+│   │   └── Owner.php
+│   ├── Exception
+│   │   ├── AnimalNotFoundException.php
+│   │   ├── InvalidAddressException.php
 │   │   ├── InvalidAnimalDataException.php
-│   │   └── ...
-│   ├── Repository/ (interfaces)
+│   │   ├── InvalidEmailException.php
+│   │   ├── InvalidMedicalRecordException.php
+│   │   ├── InvalidOwnerDataException.php
+│   │   ├── InvalidPhoneNumberException.php
+│   │   ├── OwnerNotFoundException.php
+│   │   └── PetManagementException.php
+│   ├── Repository
 │   │   ├── AnimalRepositoryInterface.php
 │   │   └── OwnerRepositoryInterface.php
-│   └── Service/
-│       └── AnimalManagementService.php
-├── Infrastructure/
-│   ├── Adapter/
-│   │   └── Config/
-│   │       └── services.yaml
-│   └── Persistence/
-│       ├── Doctrine/
-│       │   ├── Animal.orm.xml
-│       │   ├──
+│   ├── Service
+│   │   └── AnimalManagementService.php
+│   └── ValueObject
+│       └── Email.php
+├── Infrastructure
+│   ├── Adapter
+│   │   ├── CLI
+│   │   ├── Config
+│   │   │   └── service.yml
+│   │   └── Http
+│   └── Persistence
+│       ├── Doctrine
+│       │   └── Animal.orm.xml
+│       └── Repository
+│           └── AnimalRepository.php
+├── Kernel.php
+└── Presentation
+    ├── CLI
+    │   └── CreateSampleDataCommand.php
+    ├── Controller
+    │   └── AnimalController.php
+    └── Request
+        └── CreateAnimalRequest.php
