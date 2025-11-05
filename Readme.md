@@ -183,7 +183,9 @@ src/
 │   ├── Service
 │   │   └── AnimalManagementService.php
 │   └── ValueObject
-│       └── Email.php
+│       ├── Address.php
+│       ├── Email.php
+│       └── PhoneNumber.php
 ├── Infrastructure
 │   ├── Adapter
 │   │   ├── CLI
