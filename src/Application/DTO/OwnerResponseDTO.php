@@ -23,9 +23,9 @@ final readonly class OwnerResponseDTO implements JsonSerializable
         public string $lastName,
         public string $fullName,
         public string $email,
-        public string $phoneNumber,
-        public string $phoneNumberFormatted,
-        public AddressDTO $address,
+        public ?string $phoneNumber,
+        public ?string $phoneNumberFormatted,
+        public ?AddressDTO $address,
         public int $totalAnimals,
         public bool $isActive,
         public DateTimeImmutable $registrationDate,
@@ -40,15 +40,18 @@ final readonly class OwnerResponseDTO implements JsonSerializable
      */
     public static function fromEntity(Owner $owner): self
     {
+        $phoneNumber = $owner->getPhoneNumber();
+        $address = $owner->getAddress();
+
         return new self(
             id: $owner->getId(),
             firstName: $owner->getFirstName(),
             lastName: $owner->getLastName(),
             fullName: $owner->getFullName(),
             email: $owner->getEmail()->getValue(),
-            phoneNumber: $owner->getPhoneNumber()->getValue(),
-            phoneNumberFormatted: $owner->getPhoneNumber()->getFormatted(),
-            address: AddressDTO::fromValueObject($owner->getAddress()),
+            phoneNumber: $phoneNumber ? $phoneNumber->getValue() : null,
+            phoneNumberFormatted: $phoneNumber ? $phoneNumber->getFormatted() : null,
+            address: $address ? AddressDTO::fromValueObject($address) : null,
             totalAnimals: $owner->getTotalAnimals(),
             isActive: $owner->isActive(),
             registrationDate: $owner->getRegistrationDate(),
@@ -61,7 +64,10 @@ final readonly class OwnerResponseDTO implements JsonSerializable
      */
     public static function fromEntityWithAnimals(Owner $owner): self
     {
+        $phoneNumber = $owner->getPhoneNumber();
+        $address = $owner->getAddress();
         $animals = [];
+        
         foreach ($owner->getAnimals() as $animal) {
             $animals[] = AnimalSummaryDTO::fromEntity($animal);
         }
@@ -72,15 +78,41 @@ final readonly class OwnerResponseDTO implements JsonSerializable
             lastName: $owner->getLastName(),
             fullName: $owner->getFullName(),
             email: $owner->getEmail()->getValue(),
-            phoneNumber: $owner->getPhoneNumber()->getValue(),
-            phoneNumberFormatted: $owner->getPhoneNumber()->getFormatted(),
-            address: AddressDTO::fromValueObject($owner->getAddress()),
+            phoneNumber: $phoneNumber ? $phoneNumber->getValue() : null,
+            phoneNumberFormatted: $phoneNumber ? $phoneNumber->getFormatted() : null,
+            address: $address ? AddressDTO::fromValueObject($address) : null,
             totalAnimals: $owner->getTotalAnimals(),
             isActive: $owner->isActive(),
             registrationDate: $owner->getRegistrationDate(),
             updatedAt: $owner->getUpdatedAt(),
             animals: $animals,
             statistics: OwnerStatisticsDTO::fromOwner($owner),
+        );
+    }
+
+    /**
+     * Factory method pour liste (light version)
+     */
+    public static function fromEntityForList(Owner $owner): self
+    {
+        $phoneNumber = $owner->getPhoneNumber();
+        $address = $owner->getAddress();
+
+        return new self(
+            id: $owner->getId(),
+            firstName: $owner->getFirstName(),
+            lastName: $owner->getLastName(),
+            fullName: $owner->getFullName(),
+            email: $owner->getEmail()->getValue(),
+            phoneNumber: $phoneNumber ? $phoneNumber->getValue() : null,
+            phoneNumberFormatted: $phoneNumber ? $phoneNumber->getFormatted() : null,
+            address: $address ? AddressDTO::fromValueObject($address) : null,
+            totalAnimals: $owner->getTotalAnimals(),
+            isActive: $owner->isActive(),
+            registrationDate: $owner->getRegistrationDate(),
+            updatedAt: $owner->getUpdatedAt(),
+            animals: null,
+            statistics: null,
         );
     }
 
@@ -96,13 +128,18 @@ final readonly class OwnerResponseDTO implements JsonSerializable
             'fullName' => $this->fullName,
             'email' => $this->email,
             'phoneNumber' => $this->phoneNumberFormatted,
-            'address' => $this->address->toArray(),
             'totalAnimals' => $this->totalAnimals,
             'isActive' => $this->isActive,
             'registrationDate' => $this->registrationDate->format('c'),
             'updatedAt' => $this->updatedAt->format('c'),
         ];
 
+        // Ajout de l'adresse si disponible
+        if ($this->address !== null) {
+            $data['address'] = $this->address->toArray();
+        }
+
+        // Ajout des animaux si disponibles
         if ($this->animals !== null) {
             $data['animals'] = array_map(
                 fn($animal) => $animal->toArray(),
@@ -110,6 +147,7 @@ final readonly class OwnerResponseDTO implements JsonSerializable
             );
         }
 
+        // Ajout des statistiques si disponibles
         if ($this->statistics !== null) {
             $data['statistics'] = $this->statistics->toArray();
         }
@@ -148,138 +186,9 @@ final readonly class OwnerResponseDTO implements JsonSerializable
             'id' => $this->id,
             'fullName' => $this->fullName,
             'email' => $this->email,
+            'phoneNumber' => $this->phoneNumberFormatted,
             'totalAnimals' => $this->totalAnimals,
             'isActive' => $this->isActive,
-        ];
-    }
-}
-
-/**
- * DTO pour l'adresse
- */
-final readonly class AddressDTO
-{
-    public function __construct(
-        public string $street,
-        public string $city,
-        public string $postalCode,
-        public string $country,
-        public string $fullAddress,
-    ) {
-    }
-
-    public static function fromValueObject(\App\Domain\ValueObject\Address $address): self
-    {
-        return new self(
-            street: $address->getStreet(),
-            city: $address->getCity(),
-            postalCode: $address->getPostalCode(),
-            country: $address->getCountry(),
-            fullAddress: $address->getFullAddress(),
-        );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'street' => $this->street,
-            'city' => $this->city,
-            'postalCode' => $this->postalCode,
-            'country' => $this->country,
-            'fullAddress' => $this->fullAddress,
-        ];
-    }
-}
-
-/**
- * DTO pour résumé d'animal
- */
-final readonly class AnimalSummaryDTO
-{
-    public function __construct(
-        public int $id,
-        public string $type,
-        public string $name,
-        public int $age,
-        public string $color,
-    ) {
-    }
-
-    public static function fromEntity(\App\Domain\Entity\Animal $animal): self
-    {
-        return new self(
-            id: $animal->getId(),
-            type: $animal->getType(),
-            name: $animal->getName(),
-            age: $animal->calculateAge(),
-            color: $animal->getColor(),
-        );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'type' => $this->type,
-            'name' => $this->name,
-            'age' => $this->age,
-            'color' => $this->color,
-        ];
-    }
-}
-
-/**
- * DTO pour statistiques du propriétaire
- */
-final readonly class OwnerStatisticsDTO
-{
-    /**
-     * @param array<string, int> $animalsByType
-     */
-    public function __construct(
-        public int $totalAnimals,
-        public array $animalsByType,
-        public float $averageAge,
-        public int $seniorAnimals,
-    ) {
-    }
-
-    public static function fromOwner(Owner $owner): self
-    {
-        $animals = $owner->getAnimals()->toArray();
-        $animalsByType = [];
-        $totalAge = 0;
-        $seniorCount = 0;
-
-        foreach ($animals as $animal) {
-            $type = $animal->getType();
-            $animalsByType[$type] = ($animalsByType[$type] ?? 0) + 1;
-            
-            $age = $animal->calculateAge();
-            $totalAge += $age;
-            
-            if ($age >= 7) {
-                $seniorCount++;
-            }
-        }
-
-        $averageAge = count($animals) > 0 ? $totalAge / count($animals) : 0;
-
-        return new self(
-            totalAnimals: count($animals),
-            animalsByType: $animalsByType,
-            averageAge: round($averageAge, 1),
-            seniorAnimals: $seniorCount,
-        );
-    }
-
-    public function toArray(): array
-    {
-        return [
-            'totalAnimals' => $this->totalAnimals,
-            'animalsByType' => $this->animalsByType,
-            'averageAge' => $this->averageAge,
-            'seniorAnimals' => $this->seniorAnimals,
         ];
     }
 }

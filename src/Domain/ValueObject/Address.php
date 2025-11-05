@@ -321,11 +321,11 @@ final readonly class Address
     /**
      * Compare uniquement la ville
      */
-    public function isSameCity(Address $other): bool
-    {
-        return $this->city === $other->city
-            && $this->postalCode === $other->postalCode;
-    }
+    // public function isSameCity(Address $other): bool
+    // {
+    //     return $this->city === $other->city
+    //         && $this->postalCode === $other->postalCode;
+    // }
 
     /**
      * Conversion en string (utilise getFullAddress)

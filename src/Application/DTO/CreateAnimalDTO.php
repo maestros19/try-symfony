@@ -18,7 +18,7 @@ final readonly class CreateAnimalDTO
         public DateTimeImmutable $birthDate,
         public float $weight,
         public string $color,
-        public ?int $ownerId = null,
+        public int $ownerId, // ✅ Non nullable - obligatoire comme dans l'entité
         // Champs spécifiques Dog
         public ?string $breed = null,
         public ?bool $isDangerous = null,

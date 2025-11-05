@@ -28,7 +28,7 @@ class Cat extends Animal
         bool $isHypoallergenic = false,
         Owner $owner,
     ) {
-        parent::__construct($name, $birthDate, $weight, $color, $owner);
+        parent::__construct($name, $birthDate, $weight, $color, );
         $this->isIndoor = $isIndoor;
         $this->isHypoallergenic = $isHypoallergenic;
     }

@@ -2,12 +2,137 @@
 nelmio_api_doc:
     documentation:
         info:
-            title: Try Symfony API By Maestros
-            description: This is an awesome app to decouvrir Symfony Framework!
-            version: 1.0.0
+            title: 'Try Symfony API By Maestros'
+            description: 'This is an awesome app to decouvrir Symfony Framework!'
+            version: '1.0.0'
+        components:
+            schemas:
+                # Schémas d'entrée spécifiques par type d'animal
+                DogInput:
+                    type: object
+                    required: [type, name, birthDate, weight, color, ownerId, breed]
+                    properties:
+                        type:
+                            type: string
+                            enum: [dog]
+                            example: dog
+                        name:
+                            type: string
+                            example: Médor
+                        birthDate:
+                            type: string
+                            format: date-time
+                            example: '2020-05-15T00:00:00+00:00'
+                        weight:
+                            type: number
+                            format: float
+                            example: 25.5
+                        color:
+                            type: string
+                            example: Noir
+                        ownerId:
+                            type: integer
+                            example: 1
+                        breed:
+                            type: string
+                            example: Labrador
+                        isDangerous:
+                            type: boolean
+                            example: false
+                
+                CatInput:
+                    type: object
+                    required: [type, name, birthDate, weight, color, ownerId]
+                    properties:
+                        type:
+                            type: string
+                            enum: [cat]
+                            example: cat
+                        name:
+                            type: string
+                            example: Félix
+                        birthDate:
+                            type: string
+                            format: date-time
+                            example: '2021-03-20T00:00:00+00:00'
+                        weight:
+                            type: number
+                            format: float
+                            example: 4.2
+                        color:
+                            type: string
+                            example: Blanc
+                        ownerId:
+                            type: integer
+                            example: 1
+                        isIndoor:
+                            type: boolean
+                            example: true
+                        isHypoallergenic:
+                            type: boolean
+                            example: false
+                
+                BirdInput:
+                    type: object
+                    required: [type, name, birthDate, weight, color, ownerId, species, wingSpan]
+                    properties:
+                        type:
+                            type: string
+                            enum: [bird]
+                            example: bird
+                        name:
+                            type: string
+                            example: Coco
+                        birthDate:
+                            type: string
+                            format: date-time
+                            example: '2019-07-10T00:00:00+00:00'
+                        weight:
+                            type: number
+                            format: float
+                            example: 0.8
+                        color:
+                            type: string
+                            example: Vert
+                        ownerId:
+                            type: integer
+                            example: 2
+                        species:
+                            type: string
+                            example: Perroquet
+                        wingSpan:
+                            type: number
+                            format: float
+                            example: 0.5
+                        canTalk:
+                            type: boolean
+                            example: true
+                
+                OwnerInput:
+                    type: object
+                    required: [firstName, lastName, email]
+                    properties:
+                        firstName:
+                            type: string
+                            example: Jean
+                        lastName:
+                            type: string
+                            example: Dupont
+                        email:
+                            type: string
+                            format: email
+                            example: jean.dupont@example.com
+                        phoneNumber:
+                            type: string
+                            example: '+33123456789'
+                        address:
+                            type: string
+                            example: '123 Rue de Paris, 75001 Paris'
+    
     areas:
         default:
-            path_patterns: [ ^/api ]  # Détecte toutes les routes /api
+            path_patterns: [ ^/api ]
             host_patterns: [ ^.*$ ]
+    
     models: 
         use_jms: false  # Utilise le serializer natif de Symfony
