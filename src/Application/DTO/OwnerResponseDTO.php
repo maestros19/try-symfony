@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Application\DTO;
 
+use App\Domain\ValueObject\Address;
 use App\Domain\Entity\Owner;
+
 use DateTimeImmutable;
 use JsonSerializable;
 
@@ -48,10 +50,10 @@ final readonly class OwnerResponseDTO implements JsonSerializable
             firstName: $owner->getFirstName(),
             lastName: $owner->getLastName(),
             fullName: $owner->getFullName(),
-            email: $owner->getEmail()->getValue(),
-            phoneNumber: $phoneNumber ? $phoneNumber->getValue() : null,
-            phoneNumberFormatted: $phoneNumber ? $phoneNumber->getFormatted() : null,
-            address: $address ? AddressDTO::fromValueObject($address) : null,
+            email: $owner->getEmail(),
+            phoneNumber: $phoneNumber ? $phoneNumber : null,
+            phoneNumberFormatted: $phoneNumber ? $phoneNumber : null,
+            address: $address ? AddressDTO::fromValueObject(Address::fromFullAddress($address)) : null,
             totalAnimals: $owner->getTotalAnimals(),
             isActive: $owner->isActive(),
             registrationDate: $owner->getRegistrationDate(),
@@ -77,10 +79,10 @@ final readonly class OwnerResponseDTO implements JsonSerializable
             firstName: $owner->getFirstName(),
             lastName: $owner->getLastName(),
             fullName: $owner->getFullName(),
-            email: $owner->getEmail()->getValue(),
-            phoneNumber: $phoneNumber ? $phoneNumber->getValue() : null,
-            phoneNumberFormatted: $phoneNumber ? $phoneNumber->getFormatted() : null,
-            address: $address ? AddressDTO::fromValueObject($address) : null,
+            email: $owner->getEmail(),
+            phoneNumber: $phoneNumber ? $phoneNumber : null,
+            phoneNumberFormatted: $phoneNumber ? $phoneNumber : null,
+            address: $address ? AddressDTO::fromValueObject(Address::fromFullAddress($address)) : null,
             totalAnimals: $owner->getTotalAnimals(),
             isActive: $owner->isActive(),
             registrationDate: $owner->getRegistrationDate(),
@@ -103,10 +105,10 @@ final readonly class OwnerResponseDTO implements JsonSerializable
             firstName: $owner->getFirstName(),
             lastName: $owner->getLastName(),
             fullName: $owner->getFullName(),
-            email: $owner->getEmail()->getValue(),
-            phoneNumber: $phoneNumber ? $phoneNumber->getValue() : null,
-            phoneNumberFormatted: $phoneNumber ? $phoneNumber->getFormatted() : null,
-            address: $address ? AddressDTO::fromValueObject($address) : null,
+            email: $owner->getEmail(),
+            phoneNumber: $phoneNumber ? $phoneNumber : null,
+            phoneNumberFormatted: $phoneNumber ? $phoneNumber : null,
+            address: $address ? AddressDTO::fromValueObject(Address::fromFullAddress($address)) : null,
             totalAnimals: $owner->getTotalAnimals(),
             isActive: $owner->isActive(),
             registrationDate: $owner->getRegistrationDate(),

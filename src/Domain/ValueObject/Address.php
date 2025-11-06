@@ -425,4 +425,98 @@ final readonly class Address
 
         return round($earthRadius * $c, 2);
     }
+
+
+    // Mehtodes statis
+
+
+        /**
+     * Extrait la rue depuis une adresse complète
+     */
+    public static function extractStreet(string $fullAddress): ?string
+    {
+        // Exemple attendu : "10 Rue de la Paix, 75002 Paris, France"
+        $parts = explode(',', $fullAddress);
+
+        // Rue = première partie
+        return isset($parts[0]) ? trim($parts[0]) : null;
+    }
+
+    /**
+     * Extrait le code postal depuis une adresse complète
+     */
+    public static function extractPostalCode(string $fullAddress): ?string
+    {
+        // On cherche un code postal français, belge, suisse, canadien ou US
+        if (preg_match('/\b\d{5}\b/', $fullAddress, $matches)) {
+            return $matches[0]; // Code postal français ou US 5 chiffres
+        }
+
+        if (preg_match('/\b\d{4}\b/', $fullAddress, $matches)) {
+            return $matches[0]; // Belgique ou Suisse
+        }
+
+        if (preg_match('/[A-Z]\d[A-Z]\s?\d[A-Z]\d/i', $fullAddress, $matches)) {
+            return strtoupper($matches[0]); // Canada
+        }
+
+        if (preg_match('/\b\d{5}-\d{4}\b/', $fullAddress, $matches)) {
+            return $matches[0]; // US ZIP+4
+        }
+
+        return null;
+    }
+
+    /**
+     * Extrait la ville depuis une adresse complète
+     */
+    public static function extractCity(string $fullAddress): ?string
+    {
+        // Exemple : "10 Rue de la Paix, 75002 Paris, France"
+        // On supprime la rue et le pays pour isoler le bloc central
+        $parts = array_map('trim', explode(',', $fullAddress));
+
+        if (count($parts) < 2) {
+            return null;
+        }
+
+        // Généralement, la deuxième partie contient "75002 Paris"
+        $middlePart = $parts[1];
+
+        // On essaie d’extraire le nom de la ville après le code postal
+        if (preg_match('/\b\d{4,5}\s+([\p{L}\s\'\-]+)/u', $middlePart, $matches)) {
+            return ucwords(strtolower(trim($matches[1])));
+        }
+
+        // Sinon, on tente de deviner (si la partie ne contient pas de chiffres)
+        if (!preg_match('/\d/', $middlePart)) {
+            return ucwords(strtolower($middlePart));
+        }
+
+        return null;
+    }
+
+    /**
+     * Crée une instance Address à partir d'une adresse complète sous forme de chaîne
+     *
+     * Exemple : "10 Rue de la Paix, 75002 Paris, France"
+     */
+    public static function fromFullAddress(string $fullAddress): self
+    {
+        $street = self::extractStreet($fullAddress) ?? '';
+        $postalCode = self::extractPostalCode($fullAddress) ?? '';
+        $city = self::extractCity($fullAddress) ?? '';
+        
+        // Tentative de déduction du pays (dernière partie après la dernière virgule)
+        $parts = array_map('trim', explode(',', $fullAddress));
+        $country = count($parts) > 2 ? ucfirst(strtolower(end($parts))) : 'France';
+
+        return new self(
+            street: $street,
+            city: $city,
+            postalCode: $postalCode,
+            country: $country
+        );
+    }
+
 }

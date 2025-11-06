@@ -39,13 +39,13 @@ class Owner
     private string $lastName;
 
     #[ORM\Column(length: 255, unique: true)]
-    private Email $email;
+    private string $email;
 
     #[ORM\Column(length: 30, nullable: true)]
-    private ?PhoneNumber $phoneNumber = null;
+    private ?string $phoneNumber = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?Address $address = null;
+    private ?string $address = null;
 
     #[ORM\Column]
     private \DateTimeImmutable $registrationDate;
@@ -72,9 +72,9 @@ class Owner
         
         $this->firstName = ucfirst(trim($firstName));
         $this->lastName = strtoupper(trim($lastName));
-        $this->email = $email;
-        $this->phoneNumber = $phoneNumber;
-        $this->address = $address;
+        $this->email = $email->getValue();
+        $this->phoneNumber = $phoneNumber->getValue();
+        $this->address = $address->getFullAddress();
         $this->animals = new ArrayCollection();
         $this->registrationDate = new DateTimeImmutable();
         $this->updatedAt = new DateTimeImmutable();
@@ -116,13 +116,13 @@ class Owner
     {
         $hasChanged = false;
 
-        if (!$this->email->equals($email)) {
-            $this->email = $email;
+        if (!$this->email == $email->getValue() ) {
+            $this->email = $email->getValue();
             $hasChanged = true;
         }
 
-        if (!$this->phoneNumber->equals($phoneNumber)) {
-            $this->phoneNumber = $phoneNumber;
+        if (!$this->phoneNumber == $phoneNumber->getValue() ) {
+            $this->phoneNumber = $phoneNumber->getValue();
             $hasChanged = true;
         }
 
@@ -136,8 +136,8 @@ class Owner
      */
     public function updateAddress(Address $address): void
     {
-        if (!$this->address->equals($address)) {
-            $this->address = $address;
+        if (!$this->address == $address->getFullAddress()) {
+            $this->address = $address->getFullAddress();
             $this->touch();
         }
     }
@@ -353,8 +353,8 @@ class Owner
     {
         return [
             'fullName' => $this->getFullName(),
-            'email' => $this->email->getValue(),
-            'city' => $this->address->getCity(),
+            'email' => $this->email,
+            'city' => Address::extractCity($this->address),
             'totalAnimals' => $this->getTotalAnimals(),
             'animalsByType' => $this->countAnimalsByType(),
             'memberSince' => $this->registrationDate->format('Y-m-d'),
@@ -416,17 +416,17 @@ class Owner
         return $this->lastName;
     }
 
-    public function getEmail(): Email
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function getPhoneNumber(): PhoneNumber
+    public function getPhoneNumber(): string
     {
         return $this->phoneNumber;
     }
 
-    public function getAddress(): Address
+    public function getAddress(): string
     {
         return $this->address;
     }

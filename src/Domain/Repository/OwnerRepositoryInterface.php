@@ -21,14 +21,16 @@ interface OwnerRepositoryInterface
 {
     /**
      * Trouve un propriétaire par son ID
-     * 
+     * @param int $id L'ID du propriétaire
+     * @return Owner
      * @throws OwnerNotFoundException Si le propriétaire n'existe pas
      */
     public function findById(int $id): Owner;
 
     /**
      * Trouve un propriétaire par son email (unique)
-     * 
+     * @param Email $email L'email du propriétaire
+     * @return Owner
      * @throws OwnerNotFoundException Si le propriétaire n'existe pas
      */
     public function findByEmail(Email $email): Owner;
@@ -73,7 +75,7 @@ interface OwnerRepositoryInterface
 
     /**
      * Recherche par ville
-     * 
+     * @param string $city La ville recherchée
      * @return Owner[]
      */
     public function findByCity(string $city): array;
@@ -96,21 +98,26 @@ interface OwnerRepositoryInterface
      * Supprime un propriétaire
      * 
      * @param Owner $owner L'entité à supprimer
+     * @return void
      */
     public function delete(Owner $owner): void;
 
     /**
      * Compte le nombre total de propriétaires
+     * @return int
      */
     public function count(): int;
 
     /**
      * Compte les propriétaires actifs
+     * @return int
      */
     public function countActive(): int;
 
     /**
      * Vérifie si un email existe déjà
+     * @param Email $email L'email à vérifier
+     * @return bool
      */
     public function existsByEmail(Email $email): bool;
 
