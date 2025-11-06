@@ -421,6 +421,7 @@ class OwnerController extends AbstractController
     public function show(int $id): JsonResponse
     {
         try {
+            
             $owner = $this->getOwnerUseCase->execute($id);
             $responseDTO = $owner;
 
