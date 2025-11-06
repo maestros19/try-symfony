@@ -45,10 +45,10 @@ final readonly class CreateOwnerDTO
                 lastName: trim($data['lastName'] ?? $data['last_name'] ?? ''),
                 email: $data['email'],
                 phoneNumber: $data['phoneNumber'] ?? $data['phone_number'] ?? '',
-                street: $street ?? '',
-                city: $city ?? '',
-                postalCode: $postalCode ?? '',
-                country: $country ?? 'France'
+                street: $data['street'],
+                city: $data['city'],
+                postalCode: $data['postalCode'],
+                country: $data['country']
             );
         } catch (\InvalidArgumentException $e) {
             throw new InvalidOwnerDataException($e->getMessage(), previous: $e);

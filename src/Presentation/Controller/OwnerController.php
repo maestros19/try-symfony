@@ -9,9 +9,7 @@ use App\Application\DTO\OwnerResponseDTO;
 use App\Domain\Exception\InvalidOwnerDataException;
 use App\Domain\Exception\OwnerNotFoundException;
 use App\Application\UseCase\CreateOwnerUseCase;
-// use App\Application\UseCase\ListOwnersUseCase;
 use App\Application\UseCase\GetOwnerUseCase;
-// use App\Application\UseCase\DeleteOwnerUseCase;
 use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -183,7 +181,6 @@ class OwnerController extends AbstractController
     ): JsonResponse {
         try {
             $dto = CreateOwnerDTO::fromArray($request->toArray());
-            dd($dto);
             $responseDTO = $this->createOwnerUseCase->execute($dto);
 
 
@@ -205,7 +202,7 @@ class OwnerController extends AbstractController
             ], Response::HTTP_CONFLICT);
         } catch (\Exception $e) {
 
-            // dd($e->getMessage());
+            dd($e->getMessage());
             return $this->json([
                 'success' => false,
                 'error' => 'Une erreur est survenue lors de la création du propriétaire',

@@ -10,15 +10,19 @@ use App\Domain\Repository\OwnerRepositoryInterface;
 use App\Domain\ValueObject\Email;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Implémentation Doctrine du OwnerRepositoryInterface (Port Out)
  */
 class OwnerRepository extends ServiceEntityRepository implements OwnerRepositoryInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    private EntityManagerInterface $em;
+
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $em)
     {
         parent::__construct($registry, Owner::class);
+        $this->em = $em;
     }
 
     public function findById(int $id): Owner
@@ -89,14 +93,14 @@ class OwnerRepository extends ServiceEntityRepository implements OwnerRepository
 
     public function save(Owner $owner): void
     {
-        $this->_em->persist($owner);
-        $this->_em->flush();
+        $this->em->persist($owner);
+        $this->em->flush();
     }
 
     public function delete(Owner $owner): void
     {
-        $this->_em->remove($owner);
-        $this->_em->flush();
+        $this->em->remove($owner);
+        $this->em->flush();
     }
 
     public function count(array $criteria = []): int
