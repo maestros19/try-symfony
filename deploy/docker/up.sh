@@ -88,30 +88,26 @@ echo ""
 # Vérifier si .env existe pour dev
 if [[ "$ENV" == "dev" ]] && [ ! -f ".env" ]; then
     print_warning "Fichier .env introuvable. Création avec UID/GID..."
-    echo "UID=$(id -u)" > .env
-    echo "GID=$(id -g)" >> .env
-    echo "DATABASE_URL=postgresql://symfony:symfony@postgres:5432/symfony_dev" >> .env
-    echo "XDEBUG_MODE=develop,debug" >> .env
+    echo "DATABASE_URL=postgresql://symfony:symfony@postgres:5432/symfony_db" >> .env
+    echo "XDEBUG_MODE=debug,develop,coverage" >> .env
+    echo "XDEBUG_CLIENT_HOST=host.docker.internal" >> .env
+    echo "APP_DEBUG=dev" >> .env
+    echo "APP_ENV=1" >> .env
     print_success "Fichier .env créé"
     echo ""
 fi
 
-# Créer les dossiers nécessaires si inexistants
-if [ ! -d "docker/nginx" ]; then
-    print_warning "Dossier docker/nginx introuvable. Création..."
-    mkdir -p docker/nginx
-fi
 
 # Arrêter les containers existants
-print_info "Arrêt des containers existants..."
-docker-compose -f "$COMPOSE_FILE" down 2>/dev/null
+# print_info "Arrêt des containers existants..."
+# docker compose -f "$COMPOSE_FILE" down 2>/dev/null
 
 # Démarrer les services
 print_info "Démarrage des services..."
 if [ -n "$BUILD_FLAG" ] || [ -n "$PULL_FLAG" ]; then
-    docker-compose -f "$COMPOSE_FILE" up -d $BUILD_FLAG $PULL_FLAG
+    docker compose -f "$COMPOSE_FILE" up -d $BUILD_FLAG $PULL_FLAG
 else
-    docker-compose -f "$COMPOSE_FILE" up -d
+    docker compose -f "$COMPOSE_FILE" up -d
 fi
 
 # Vérifier le statut
@@ -133,11 +129,11 @@ if [ $? -eq 0 ]; then
         echo -e "${BLUE}╚════════════════════════════════════════════════════════════╝${NC}"
         echo ""
         print_info "Commandes utiles:"
-        echo "  • Logs:              docker-compose -f $COMPOSE_FILE logs -f"
-        echo "  • Shell PHP:         docker-compose -f $COMPOSE_FILE exec php bash"
-        echo "  • Composer install:  docker-compose -f $COMPOSE_FILE exec php composer install"
-        echo "  • Clear cache:       docker-compose -f $COMPOSE_FILE exec php php bin/console cache:clear"
-        echo "  • Migrations:        docker-compose -f $COMPOSE_FILE exec php php bin/console doctrine:migrations:migrate"
+        echo "  • Logs:              docker compose -f $COMPOSE_FILE logs -f"
+        echo "  • Shell PHP:         docker compose -f $COMPOSE_FILE exec php bash"
+        echo "  • Composer install:  docker compose -f $COMPOSE_FILE exec php composer install"
+        echo "  • Clear cache:       docker compose -f $COMPOSE_FILE exec php php bin/console cache:clear"
+        echo "  • Migrations:        docker compose -f $COMPOSE_FILE exec php php bin/console doctrine:migrations:migrate"
     else
         echo -e "${BLUE}╔════════════════════════════════════════════════════════════╗${NC}"
         echo -e "${BLUE}║${NC}  ${GREEN}Services disponibles (PROD)${NC}                             ${BLUE}║${NC}"
@@ -146,19 +142,19 @@ if [ $? -eq 0 ]; then
         echo -e "${BLUE}╚════════════════════════════════════════════════════════════╝${NC}"
         echo ""
         print_info "Commandes utiles:"
-        echo "  • Logs:        docker-compose -f $COMPOSE_FILE logs -f"
-        echo "  • Shell PHP:   docker-compose -f $COMPOSE_FILE exec php sh"
-        echo "  • Status:      docker-compose -f $COMPOSE_FILE ps"
+        echo "  • Logs:        docker compose -f $COMPOSE_FILE logs -f"
+        echo "  • Shell PHP:   docker compose -f $COMPOSE_FILE exec php sh"
+        echo "  • Status:      docker compose -f $COMPOSE_FILE ps"
     fi
     
     echo ""
     print_info "Statut des containers:"
-    docker-compose -f "$COMPOSE_FILE" ps
+    docker compose -f "$COMPOSE_FILE" ps
 else
     echo ""
     print_error "❌ Erreur lors du démarrage de l'environnement $ENV"
     echo ""
     print_info "Vérifiez les logs avec:"
-    echo "  docker-compose -f $COMPOSE_FILE logs"
+    echo "  docker compose -f $COMPOSE_FILE logs"
     exit 1
 fi
